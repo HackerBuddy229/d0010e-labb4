@@ -1,4 +1,4 @@
-package data;
+package lab4.data;
 
 //TODO: rename ME, OTHER, NONE
 public enum TileState {
