@@ -17,6 +17,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class GamePanel extends JPanel implements Observer{
 
+	public int getUNIT_SIZE() {
+		return UNIT_SIZE;
+	}
+
 	private final int UNIT_SIZE = 20;
 	private GameGrid grid;
 	

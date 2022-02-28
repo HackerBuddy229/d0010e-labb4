@@ -40,15 +40,17 @@ public class GomokuGUI implements Observer{
 		SpringLayout layout = new SpringLayout();
 		display.setLayout(layout);
 
-		connectbutton = new JButton("");
+		GamePanel gamePanel = new GamePanel(gamestate.getGameGrid());
+
+		connectbutton = new JButton("Connect");
 		connectbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-
+				new ConnectionWindow(client);
 			}
 		});
 
-		newgamebutton = new JButton("");
+		newgamebutton = new JButton("New game");
 		newgamebutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -56,7 +58,7 @@ public class GomokuGUI implements Observer{
 			}
 		});
 
-		disconnectbutton = new JButton("");
+		disconnectbutton = new JButton("Disconnect");
 		disconnectbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
@@ -65,6 +67,31 @@ public class GomokuGUI implements Observer{
 		});
 
 		messagelabel = new JLabel("Label");
+
+		display.add(gamePanel);
+		display.add(connectbutton);
+		display.add(newgamebutton);
+		display.add(disconnectbutton);
+		display.add(messagelabel);
+
+		display.pack();
+
+		display.setSize(gamePanel.getUNIT_SIZE() * gamestate.getDEFAULT_SIZE() + 40, gamePanel.getUNIT_SIZE() * gamestate.getDEFAULT_SIZE() + 200);
+
+		layout.putConstraint(SpringLayout.WEST, gamePanel, 5, SpringLayout.WEST, display);
+		layout.putConstraint(SpringLayout.NORTH, gamePanel, 5, SpringLayout.NORTH, display);
+		layout.putConstraint(SpringLayout.NORTH, connectbutton, 5, SpringLayout.SOUTH, gamePanel);
+		layout.putConstraint(SpringLayout.NORTH, newgamebutton, 5, SpringLayout.SOUTH, gamePanel);
+		layout.putConstraint(SpringLayout.NORTH, disconnectbutton, 5, SpringLayout.SOUTH, gamePanel);
+
+		layout.putConstraint(SpringLayout.WEST, messagelabel, 5, SpringLayout.WEST, display);
+		layout.putConstraint(SpringLayout.NORTH, messagelabel, 5, SpringLayout.SOUTH, connectbutton);
+
+		layout.putConstraint(SpringLayout.WEST, connectbutton, 5, SpringLayout.WEST, display);
+		layout.putConstraint(SpringLayout.WEST, newgamebutton, 5, SpringLayout.EAST, connectbutton);
+		layout.putConstraint(SpringLayout.WEST, disconnectbutton, 5, SpringLayout.EAST, newgamebutton);
+
+		display.setVisible(true);
 
 
 

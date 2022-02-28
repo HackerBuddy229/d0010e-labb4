@@ -17,7 +17,11 @@ import java.util.Observer;
 
 public class GomokuGameState extends Observable implements Observer{
 
-   // Game variables
+	public int getDEFAULT_SIZE() {
+		return DEFAULT_SIZE;
+	}
+
+	// Game variables
 	private final int DEFAULT_SIZE = 15;
 	private GameGrid gameGrid;
 
