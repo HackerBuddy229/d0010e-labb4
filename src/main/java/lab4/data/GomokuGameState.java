@@ -21,10 +21,32 @@ public class GomokuGameState extends Observable implements Observer{
 	private final int DEFAULT_SIZE = 15;
 	private GameGrid gameGrid;
 
+	private void setCurrentState(GameState currentState) {
+		this.currentState = currentState;
+
+		switch (currentState) {
+			case MY_TURN:
+				setMessage("It's your turn");
+				break;
+			case OTHER_TURN:
+				setMessage("Waiting for other players turn");
+		}
+
+
+		this.setChanged();
+		this.notifyObservers();
+	}
+
 	private GameState currentState;
 	
 	private GomokuClient client;
-	
+
+	private void setMessage(String message) {
+		this.message = message;
+		this.setChanged();
+		this.notifyObservers();
+	}
+
 	private String message;
 	
 	/**
@@ -47,7 +69,7 @@ public class GomokuGameState extends Observable implements Observer{
 	 * @return the message string
 	 */
 	public String getMessageString(){
-		throw new NotImplementedException();
+		return message;
 	}
 	
 	/**
@@ -56,7 +78,7 @@ public class GomokuGameState extends Observable implements Observer{
 	 * @return the game grid
 	 */
 	public GameGrid getGameGrid(){
-		throw new NotImplementedException();
+		return gameGrid;
 	}
 
 	/**
@@ -65,29 +87,83 @@ public class GomokuGameState extends Observable implements Observer{
 	 * @param x the x coordinate
 	 * @param y the y coordinate
 	 */
-	public void move(int x, int y){}
-	
+	public void move(int x, int y){
+		// is players turn
+		if (currentState == GameState.MY_TURN) {
+			//is in bounds
+			try {
+				TileState currentTile = gameGrid.getLocation(x, y);
+				if (currentTile == TileState.NONE) {
+					boolean result = gameGrid.move(x, y, TileState.ME);
+					if (result) {
+						client.sendMoveMessage(x, y);
+						setCurrentState(GameState.OTHER_TURN);
+						
+						//check win
+						if (gameGrid.isWinner(TileState.ME))
+							setWinner(TileState.ME);
+					}
+						
+				}
+			} catch (IndexOutOfBoundsException ex) {
+				setMessage("tried to move out of bounds!");
+			}
+		} else switch (currentState) {
+			case OTHER_TURN:
+				setMessage("Not your turn");
+				break;
+			case NOT_STARTED:
+				setMessage("Game not started");
+		}
+	}
+
+	private void setWinner(TileState player) {
+		setCurrentState(GameState.NOT_STARTED);
+		switch (player) {
+			case ME:
+				setMessage("You have won!!!");
+				break;
+			case OTHER:
+				setMessage("Your opponent won");
+		}
+	}
+
 	/**
 	 * Starts a new game with the current lab4.client
 	 */
-	public void newGame(){}
+	public void newGame(){
+		setCurrentState(GameState.OTHER_TURN);
+		gameGrid.clearGrid();
+		client.sendNewGameMessage();
+	}
 	
 	/**
 	 * Other player has requested a new game, so the 
 	 * game state is changed accordingly
 	 */
-	public void receivedNewGame(){}
+	public void receivedNewGame(){
+		gameGrid.clearGrid();
+		setCurrentState(GameState.MY_TURN);
+	}
 	
 	/**
 	 * The connection to the other player is lost, 
 	 * so the game is interrupted
 	 */
-	public void otherGuyLeft(){}
+	public void otherGuyLeft(){
+		gameGrid.clearGrid();
+		setCurrentState(GameState.NOT_STARTED);
+		setMessage("Opponent disconnected!");
+	}
 	
 	/**
 	 * The player disconnects from the lab4.client
 	 */
-	public void disconnect(){}
+	public void disconnect(){
+		setCurrentState(GameState.NOT_STARTED);
+		setMessage("No game in progress");
+		client.disconnect();
+	}
 	
 	/**
 	 * The player receives a move from the other player
@@ -95,7 +171,20 @@ public class GomokuGameState extends Observable implements Observer{
 	 * @param x The x coordinate of the move
 	 * @param y The y coordinate of the move
 	 */
-	public void receivedMove(int x, int y){}
+	public void receivedMove(int x, int y){
+		boolean result = gameGrid.move(x, y, TileState.OTHER);
+		if (!result)
+			throw new RuntimeException("Received faulty move");
+		setCurrentState(GameState.MY_TURN);
+		setMessage("Your turn");
+
+		//check win
+
+		if (gameGrid.isWinner(TileState.OTHER)) {
+			setCurrentState(GameState.NOT_STARTED);
+			setMessage("The other player has won!!!");
+		}
+	}
 	
 	public void update(Observable o, Object arg) {
 		
@@ -111,8 +200,6 @@ public class GomokuGameState extends Observable implements Observer{
 		}
 		setChanged();
 		notifyObservers();
-		
-		
 	}
 	
 }

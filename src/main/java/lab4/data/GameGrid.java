@@ -65,7 +65,6 @@ public class GameGrid extends Observable{
 		}
 
 		return false;
-
 	}
 	
 	/**
@@ -100,6 +99,7 @@ public class GameGrid extends Observable{
 		//check diagonal
 		return isDiagonalWinner(player);
 	}
+
 
 	private boolean isStraightWinner(TileState player, Function<Point, TileState> getLocation) {
 		for (int x = 0; x < gridSize; x++) {
