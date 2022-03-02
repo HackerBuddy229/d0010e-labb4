@@ -2,9 +2,12 @@ package lab4.gui;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.Observable;
 import java.util.Observer;
 
+import lab4.data.GameGrid;
 import lab4.data.GomokuGameState;
 import lab4.client.GomokuClient;
 
@@ -40,7 +43,11 @@ public class GomokuGUI implements Observer{
 		SpringLayout layout = new SpringLayout();
 		display.setLayout(layout);
 
+
 		GamePanel gamePanel = new GamePanel(gamestate.getGameGrid());
+
+
+		display.addMouseListener(new Listner(gamePanel, gamestate));
 
 		connectbutton = new JButton("Connect");
 		connectbutton.addActionListener(new ActionListener() {
@@ -54,7 +61,7 @@ public class GomokuGUI implements Observer{
 		newgamebutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-
+				gamestate.newGame();
 			}
 		});
 
@@ -62,11 +69,11 @@ public class GomokuGUI implements Observer{
 		disconnectbutton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent actionEvent) {
-
+				gamestate.disconnect();
 			}
 		});
 
-		messagelabel = new JLabel("Label");
+		messagelabel = new JLabel(gamestate.getMessageString());
 
 		display.add(gamePanel);
 		display.add(connectbutton);
@@ -118,6 +125,48 @@ public class GomokuGUI implements Observer{
 			messagelabel.setText(gamestate.getMessageString());
 		}
 		
+	}
+
+	private class Listner implements MouseListener {
+
+		private GamePanel panel;
+		private GomokuGameState state;
+
+		public Listner(GamePanel panel, GomokuGameState state) {
+			this.panel = panel;
+			this.state = state;
+		}
+
+		@Override
+		public void mouseClicked(MouseEvent mouseEvent) {
+			int btn = mouseEvent.getButton();
+			if (btn != 1)
+				return;
+
+			Point point = mouseEvent.getPoint();
+			int[] realCoordinates = panel.getGridPosition(point.x, point.y);
+			state.move(realCoordinates[0], realCoordinates[1]);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent mouseEvent) {
+
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent mouseEvent) {
+
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent mouseEvent) {
+
+		}
+
+		@Override
+		public void mouseExited(MouseEvent mouseEvent) {
+
+		}
 	}
 	
 }

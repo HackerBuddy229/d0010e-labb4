@@ -34,11 +34,11 @@ public class GomokuGameState extends Observable implements Observer{
 				break;
 			case OTHER_TURN:
 				setMessage("Waiting for other players turn");
+				break;
+			default:
+				this.setChanged();
+				this.notifyObservers();
 		}
-
-
-		this.setChanged();
-		this.notifyObservers();
 	}
 
 	private GameState currentState;

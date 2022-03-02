@@ -11,6 +11,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <exec.mainClass>d0010e-labb4.GomokuMain</exec.mainClass>
     </properties>
 
     <dependencies>

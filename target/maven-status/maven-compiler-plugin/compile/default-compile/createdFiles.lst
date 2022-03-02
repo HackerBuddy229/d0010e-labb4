@@ -1,7 +1,13 @@
-lab4/gui/GomokuGUI.class
+lab4/gui/GomokuGUI$2.class
+lab4/gui/GamePanel$1.class
+lab4/data/GameGrid$Point.class
 lab4/data/GomokuGameState.class
-lab4/data/GameState.class
 lab4/data/GameGrid.class
-lab4/data/TileState.class
+lab4/gui/GomokuGUI$3.class
 lab4/GomokuMain.class
 lab4/gui/GamePanel.class
+lab4/gui/GomokuGUI.class
+lab4/data/GameState.class
+lab4/data/TileState.class
+lab4/data/GomokuGameState$1.class
+lab4/gui/GomokuGUI$1.class
